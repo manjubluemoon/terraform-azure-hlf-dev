@@ -28,13 +28,13 @@ variable locationk8s {
 }
 
 variable aks_service_principal_app_id {
-    default= "Enter_aks_service_principal_app_id"
+    default= "e9f91da8-c684-4cc4-b2d3-cabf7112e7c0"
 }
 
 variable aks_service_principal_client_secret{
-    default = "Enter_aks_service_principal_client_secret"
+    default = "ePf8Q~doRQy3isQoZgNWuJlrkEKG9n0y679h8c_s"
 }
 
 variable aks_service_principal_object_id {
-    default= "Enter_aks_service_principal_object_id"
+    default= "c007453b-b40b-44cc-a1e5-d777a94f23ce"
 }
