@@ -12,15 +12,15 @@ variable "ssh_public_key" {
 }
 
 variable "dns_prefix" {
-    default = "gritfyk8s"
+    default = "boochis-hlf-dev-dns"
 }
 
 variable cluster_name {
-    default = "gritfyk8s"
+    default = "boochis-hlf-dev-cluster"
 }
 
 variable resource_group_name {
-    default = "gritfy"
+    default = "boochis-hlf-dev-rg"
 }
 
 variable locationk8s {
