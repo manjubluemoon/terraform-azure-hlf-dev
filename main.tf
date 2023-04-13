@@ -1,7 +1,7 @@
 resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
     name                = var.cluster_name
     location            = var.locationk8s
-    resource_group_name = var.resource_group_name
+    resource_group_name = var.rg_name
     dns_prefix          = var.dns_prefix
 
     linux_profile {
