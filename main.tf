@@ -4,6 +4,12 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
     resource_group_name = var.resource_group_name
     dns_prefix          = var.dns_prefix
 
+resource "azurerm_resource_group" "boochis-hlf-dev-rg" {
+  name     = var.resource_group_name
+  location = var.locationk8s
+}
+
+
     linux_profile {
         admin_username = "boss"
 
