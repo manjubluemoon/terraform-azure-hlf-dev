@@ -1,4 +1,4 @@
-resource "azurerm_kubernetes_cluster" "boochis-k8-hlf-dev" {
+resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
     name                = var.cluster_name
     location            = var.locationk8s
     resource_group_name = var.resource_group_name
