@@ -32,3 +32,7 @@ output "host" {
     value = azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config.0.host
     sensitive = true
 }
+
+output "resource_group_name" {
+  value = azurerm_resource_group.boochis-hlf-dev-rg.name
+}
