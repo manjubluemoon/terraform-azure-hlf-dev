@@ -36,3 +36,7 @@ output "host" {
 output "resource_group_name" {
   value = azurerm_resource_group.boochis-hlf-dev-rg.name
 }
+
+output "kubernetes_config" {
+  value = azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config_raw
+}
