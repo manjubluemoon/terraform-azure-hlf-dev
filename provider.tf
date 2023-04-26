@@ -13,6 +13,8 @@ terraform {
   }
 }
 
-provider "azurerm" {
-  features {}
+provider "kubernetes" {
+  config_path = var.kube_config_path
+
+  version = "~> 2.0"
 }
