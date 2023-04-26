@@ -38,3 +38,50 @@ variable aks_service_principal_client_secret{
 variable aks_service_principal_object_id {
     default= "c007453b-b40b-44cc-a1e5-d777a94f23ce"
 }
+
+variable "namespace" {
+  type    = string
+  default = "default"
+}
+
+variable "orderer_name" {
+  type    = string
+  default = "orderer.example.com"
+}
+
+variable "peer_name" {
+  type    = string
+  default = "peer0.org1.example.com"
+}
+
+variable "ca_cert" {
+  type = string
+}
+
+variable "ca_key" {
+  type = string
+}
+
+variable "orderer_cert" {
+  type = string
+}
+
+variable "orderer_key" {
+  type = string
+}
+
+variable "peer_cert" {
+  type = string
+}
+
+variable "peer_key" {
+  type = string
+}
+
+variable "subscription_id" {}
+variable "client_id" {}
+variable "client_secret" {}
+variable "tenant_id" {}
+variable "cluster_name" {}
+variable "dns_prefix" {}
+variable "agent_count" {}
