@@ -77,11 +77,3 @@ variable "peer_cert" {
 variable "peer_key" {
   type = string
 }
-
-variable "subscription_id" {}
-variable "client_id" {}
-variable "client_secret" {}
-variable "tenant_id" {}
-variable "cluster_name" {}
-variable "dns_prefix" {}
-variable "agent_count" {}
