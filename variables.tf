@@ -70,10 +70,6 @@ variable "orderer_cert" {
   type = string
 }
 
-variable "orderer_key" {
-  type = string
-}
-
 variable "peer_cert" {
   default = ""
 }
