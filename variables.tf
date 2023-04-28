@@ -67,16 +67,17 @@ variable "orderer_key" {
 
 
 variable "orderer_cert" {
-  type = string
-  orderer_cert = "value"
+  description = "The TLS certificate for the orderer"
 }
+
 
 variable "peer_cert" {
   default = ""
 }
 
 
-variable "peer_key" {
-  type = string
-  peer_key = "value"
+variable "peer_private_key" {
+  description = "The private key for the peer"
+  type        = string
 }
+
