@@ -55,12 +55,16 @@ variable "peer_name" {
 }
 
 variable "ca_cert" {
-  type = string
+  description = "Certificate of the Certificate Authority"
+  type        = string
+  default     = "default-value"
 }
 
-variable "ca_key" {
-  type = string
+variable "orderer_key" {
+  description = "The private key for the orderer"
+  default     = "default_value"
 }
+
 
 variable "orderer_cert" {
   type = string
@@ -71,8 +75,9 @@ variable "orderer_key" {
 }
 
 variable "peer_cert" {
-  type = string
+  default = ""
 }
+
 
 variable "peer_key" {
   type = string
