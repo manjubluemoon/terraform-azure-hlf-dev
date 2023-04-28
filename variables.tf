@@ -68,6 +68,7 @@ variable "orderer_key" {
 
 variable "orderer_cert" {
   type = string
+  orderer_cert = "value"
 }
 
 variable "peer_cert" {
@@ -77,4 +78,5 @@ variable "peer_cert" {
 
 variable "peer_key" {
   type = string
+  peer_key = "value"
 }
