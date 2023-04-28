@@ -61,4 +61,35 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
       azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster
     ]
   }
+
+  # Create Kubernetes secrets for private keys
+  resource "kubernetes_secret" "peer-private-key" {
+    metadata {
+      name = "peer-private-key"
+    }
+
+    data = {
+      "peer-private-key.txt" = filebase64("/home/manjunatha/peer-private-key.txt")
+    }
+  }
+
+  resource "kubernetes_secret" "orderer-private-key" {
+    metadata {
+      name = "orderer-private-key"
+    }
+
+    data = {
+      "orderer-private-key.txt" = filebase64("/home/manjunatha/orderer-private-key.txt")
+    }
+  }
+
+  resource "kubernetes_secret" "ca-private-key" {
+    metadata {
+      name = "ca-private-key"
+    }
+
+    data = {
+      "ca-private-key.txt" = filebase64("/home/manjunatha/ca-private-key.txt")
+    }
+  }
 }
