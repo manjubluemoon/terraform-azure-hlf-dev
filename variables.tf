@@ -1,83 +1,77 @@
-variable "resource_group_location" {
-  default       = "South India"
-  description   = "Location of the resource group."
+# Resource group
+variable "resource_group_name" {
+  description = "Name of the resource group to create."
+  type        = string
 }
 
-variable "agent_count" {
-    default = 1
+# AKS cluster
+variable "locationk8s" {
+  description = "The Azure location to deploy the AKS cluster in."
+  type        = string
 }
 
-variable "ssh_public_key" {
-    default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDDQJEaoMsy3Owj9OoTQcib1gGazU3tFd+Y7H99eGpqFYRqBBT1GkEEiEJUOsXz7yFag8N0jTzTGCHAwwCbpm7hg9hGC8JRxHF7Q7DLxUIeWkBKT4mW1YQulJu0cfqFX3x8x29ak2d7d4frgaUYoc1XMm9xNnZg9rlLDN8LH7PfcSMqXSY0kQilAJz3SmcDthG3bnSja8qcY1gvbkNalq/tLUkbud8DcQdqIGWtmyUh089yzIIeKnrUSv4zxMMGksOD8gd9FVGy4nqK3wCNEASUBB8DvI8NMfqSJIMWmqTYwJ1rYejbQbp4o3HmHl4MYkQRPvzcy4sSBBz0iqVDbzuM5TMR+Riw5aswhsKpeFwG9XFp1hlmfT0YH1SbX45KMgQWIDKZzPLgNWEwfMiPuA8KZfiPlX+5UZaKMsGG1TPmNCdB+hH/fBokqkFZ4wfDlJZ5jOSL4y6DCghBaDY2/fxZGIV3x5FjAuG7LUcE9yko8b57Yev/A62Pv7hJyOs86DU= generated-by-azure"
+variable "cluster_name" {
+  description = "Name of the AKS cluster to create."
+  type        = string
 }
 
 variable "dns_prefix" {
-    default = "boochis-hlf-dev-dns"
-}
-
-variable cluster_name {
-    default = "boochis-hlf-dev-cluster"
-}
-
-variable resource_group_name {
-    default = "boochis-hlf-dev-rg"
-}
-
-variable locationk8s {
-    default = "South India"
-}
-
-variable aks_service_principal_app_id {
-    default= "e9f91da8-c684-4cc4-b2d3-cabf7112e7c0"
-}
-
-variable aks_service_principal_client_secret{
-    default = "ePf8Q~doRQy3isQoZgNWuJlrkEKG9n0y679h8c_s"
-}
-
-variable aks_service_principal_object_id {
-    default= "c007453b-b40b-44cc-a1e5-d777a94f23ce"
-}
-
-variable "namespace" {
-  type    = string
-  default = "default"
-}
-
-variable "orderer_name" {
-  type    = string
-  default = "orderer.example.com"
-}
-
-variable "peer_name" {
-  type    = string
-  default = "peer0.org1.example.com"
-}
-
-variable "ca_cert" {
-  description = "Certificate of the Certificate Authority"
-  type        = string
-  default     = "default-value"
-}
-
-variable "orderer_key" {
-  description = "The private key for the orderer"
-  default     = "default_value"
-}
-
-
-variable "orderer_cert" {
-  description = "The TLS certificate for the orderer"
-}
-
-
-variable "peer_cert" {
-  default = ""
-}
-
-
-variable "peer_private_key" {
-  description = "The private key for the peer"
+  description = "DNS prefix specified when creating the AKS cluster."
   type        = string
 }
 
+variable "agent_count" {
+  description = "The number of agent nodes to provision in the AKS cluster."
+  type        = number
+}
+
+variable "ssh_public_key" {
+  description = "SSH public key used for accessing the AKS cluster."
+  type        = string
+}
+
+variable "aks_service_principal_app_id" {
+  description = "Application ID of the service principal used for the AKS cluster."
+  type        = string
+}
+
+variable "aks_service_principal_client_secret" {
+  description = "Client secret of the service principal used for the AKS cluster."
+  type        = string
+}
+
+# Hyperledger Fabric
+variable "org_name" {
+  description = "Name of the Hyperledger Fabric organization."
+  type        = string
+}
+
+variable "msp_id" {
+  description = "MSP ID of the Hyperledger Fabric organization."
+  type        = string
+}
+
+variable "ca_username" {
+  description = "Username for the Hyperledger Fabric CA."
+  type        = string
+}
+
+variable "ca_password" {
+  description = "Password for the Hyperledger Fabric CA."
+  type        = string
+}
+
+variable "orderer_address" {
+  description = "The address of the Hyperledger Fabric orderer."
+  type        = string
+}
+
+variable "peer_address" {
+  description = "The address of the Hyperledger Fabric peer."
+  type        = string
+}
+
+variable "peer_private_key_file_path" {
+  description = "Path to the private key file for the Hyperledger Fabric peer."
+  type        = string
+}
