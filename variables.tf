@@ -1,77 +1,115 @@
-# Resource group
 variable "resource_group_name" {
-  description = "Name of the resource group to create."
+  description = "The name of the resource group in which to create the AKS cluster."
   type        = string
 }
 
-# AKS cluster
 variable "locationk8s" {
-  description = "The Azure location to deploy the AKS cluster in."
+  description = "The location in which to create the AKS cluster."
   type        = string
 }
 
 variable "cluster_name" {
-  description = "Name of the AKS cluster to create."
+  description = "The name of the AKS cluster to create."
   type        = string
 }
 
 variable "dns_prefix" {
-  description = "DNS prefix specified when creating the AKS cluster."
+  description = "The DNS prefix to use with the AKS cluster."
+  type        = string
+}
+
+variable "ssh_public_key" {
+  description = "The public key to use for SSH access to the AKS cluster."
   type        = string
 }
 
 variable "agent_count" {
   description = "The number of agent nodes to provision in the AKS cluster."
   type        = number
-}
-
-variable "ssh_public_key" {
-  description = "SSH public key used for accessing the AKS cluster."
-  type        = string
+  default     = 2
 }
 
 variable "aks_service_principal_app_id" {
-  description = "Application ID of the service principal used for the AKS cluster."
+  description = "The application ID of the service principal used by AKS."
   type        = string
 }
 
 variable "aks_service_principal_client_secret" {
-  description = "Client secret of the service principal used for the AKS cluster."
+  description = "The client secret of the service principal used by AKS."
   type        = string
 }
 
-# Hyperledger Fabric
-variable "org_name" {
-  description = "Name of the Hyperledger Fabric organization."
+variable "ca_cert_path" {
+  description = "The path to the CA server TLS cert file."
   type        = string
 }
 
-variable "msp_id" {
-  description = "MSP ID of the Hyperledger Fabric organization."
+variable "ca_key_path" {
+  description = "The path to the CA server TLS key file."
   type        = string
 }
 
-variable "ca_username" {
-  description = "Username for the Hyperledger Fabric CA."
+variable "ca_password_path" {
+  description = "The path to the CA server TLS key password file."
   type        = string
 }
 
-variable "ca_password" {
-  description = "Password for the Hyperledger Fabric CA."
+variable "orderer_cert_path" {
+  description = "The path to the orderer TLS cert file."
   type        = string
 }
 
-variable "orderer_address" {
-  description = "The address of the Hyperledger Fabric orderer."
+variable "orderer_key_path" {
+  description = "The path to the orderer TLS key file."
   type        = string
 }
 
-variable "peer_address" {
-  description = "The address of the Hyperledger Fabric peer."
+variable "peer_cert_path" {
+  description = "The path to the peer TLS cert file."
   type        = string
 }
 
-variable "peer_private_key_file_path" {
-  description = "Path to the private key file for the Hyperledger Fabric peer."
+variable "peer_key_path" {
+  description = "The path to the peer TLS key file."
+  type        = string
+}
+
+variable "org1_admin_cert_path" {
+  description = "The path to the Org1 admin TLS cert file."
+  type        = string
+}
+
+variable "org1_admin_key_path" {
+  description = "The path to the Org1 admin TLS key file."
+  type        = string
+}
+
+variable "org1_user_cert_path" {
+  description = "The path to the Org1 user TLS cert file."
+  type        = string
+}
+
+variable "org1_user_key_path" {
+  description = "The path to the Org1 user TLS key file."
+  type        = string
+}
+
+variable "org2_admin_cert_path" {
+  description = "The path to the Org2 admin TLS cert file."
+  type        = string
+}
+
+variable "org2_admin_key_path" {
+  description = "The path to the Org2 admin TLS key file."
+  type        = string
+}
+
+variable "org2_user_cert_path" {
+  description = "The path to the Org2 user TLS cert file."
+  type        = string
+}
+
+variable "org2_user_key_path" {
+  description = "The path to the Org2 user TLS key file."
   type        = string
 }
