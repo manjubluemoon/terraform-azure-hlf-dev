@@ -1,115 +1,40 @@
-variable "resource_group_name" {
-  description = "The name of the resource group in which to create the AKS cluster."
-  type        = string
-}
-
-variable "locationk8s" {
-  description = "The location in which to create the AKS cluster."
-  type        = string
-}
-
-variable "cluster_name" {
-  description = "The name of the AKS cluster to create."
-  type        = string
-}
-
-variable "dns_prefix" {
-  description = "The DNS prefix to use with the AKS cluster."
-  type        = string
-}
-
-variable "ssh_public_key" {
-  description = "The public key to use for SSH access to the AKS cluster."
-  type        = string
+variable "resource_group_location" {
+  default       = "South India"
+  description   = "Location of the resource group."
 }
 
 variable "agent_count" {
-  description = "The number of agent nodes to provision in the AKS cluster."
-  type        = number
-  default     = 2
+    default = 1
 }
 
-variable "aks_service_principal_app_id" {
-  description = "The application ID of the service principal used by AKS."
-  type        = string
+variable "ssh_public_key" {
+    default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDDQJEaoMsy3Owj9OoTQcib1gGazU3tFd+Y7H99eGpqFYRqBBT1GkEEiEJUOsXz7yFag8N0jTzTGCHAwwCbpm7hg9hGC8JRxHF7Q7DLxUIeWkBKT4mW1YQulJu0cfqFX3x8x29ak2d7d4frgaUYoc1XMm9xNnZg9rlLDN8LH7PfcSMqXSY0kQilAJz3SmcDthG3bnSja8qcY1gvbkNalq/tLUkbud8DcQdqIGWtmyUh089yzIIeKnrUSv4zxMMGksOD8gd9FVGy4nqK3wCNEASUBB8DvI8NMfqSJIMWmqTYwJ1rYejbQbp4o3HmHl4MYkQRPvzcy4sSBBz0iqVDbzuM5TMR+Riw5aswhsKpeFwG9XFp1hlmfT0YH1SbX45KMgQWIDKZzPLgNWEwfMiPuA8KZfiPlX+5UZaKMsGG1TPmNCdB+hH/fBokqkFZ4wfDlJZ5jOSL4y6DCghBaDY2/fxZGIV3x5FjAuG7LUcE9yko8b57Yev/A62Pv7hJyOs86DU= generated-by-azure"
 }
 
-variable "aks_service_principal_client_secret" {
-  description = "The client secret of the service principal used by AKS."
-  type        = string
+variable "dns_prefix" {
+    default = "boochis-hlf-dev-dns"
 }
 
-variable "ca_cert_path" {
-  description = "The path to the CA server TLS cert file."
-  type        = string
+variable cluster_name {
+    default = "boochis-hlf-dev-cluster"
 }
 
-variable "ca_key_path" {
-  description = "The path to the CA server TLS key file."
-  type        = string
+variable resource_group_name {
+    default = "boochis-hlf-dev-rg"
 }
 
-variable "ca_password_path" {
-  description = "The path to the CA server TLS key password file."
-  type        = string
+variable locationk8s {
+    default = "South India"
 }
 
-variable "orderer_cert_path" {
-  description = "The path to the orderer TLS cert file."
-  type        = string
+variable aks_service_principal_app_id {
+    default= "e9f91da8-c684-4cc4-b2d3-cabf7112e7c0"
 }
 
-variable "orderer_key_path" {
-  description = "The path to the orderer TLS key file."
-  type        = string
+variable aks_service_principal_client_secret{
+    default = "ePf8Q~doRQy3isQoZgNWuJlrkEKG9n0y679h8c_s"
 }
 
-variable "peer_cert_path" {
-  description = "The path to the peer TLS cert file."
-  type        = string
-}
-
-variable "peer_key_path" {
-  description = "The path to the peer TLS key file."
-  type        = string
-}
-
-variable "org1_admin_cert_path" {
-  description = "The path to the Org1 admin TLS cert file."
-  type        = string
-}
-
-variable "org1_admin_key_path" {
-  description = "The path to the Org1 admin TLS key file."
-  type        = string
-}
-
-variable "org1_user_cert_path" {
-  description = "The path to the Org1 user TLS cert file."
-  type        = string
-}
-
-variable "org1_user_key_path" {
-  description = "The path to the Org1 user TLS key file."
-  type        = string
-}
-
-variable "org2_admin_cert_path" {
-  description = "The path to the Org2 admin TLS cert file."
-  type        = string
-}
-
-variable "org2_admin_key_path" {
-  description = "The path to the Org2 admin TLS key file."
-  type        = string
-}
-
-variable "org2_user_cert_path" {
-  description = "The path to the Org2 user TLS cert file."
-  type        = string
-}
-
-variable "org2_user_key_path" {
-  description = "The path to the Org2 user TLS key file."
-  type        = string
+variable aks_service_principal_object_id {
+    default= "c007453b-b40b-44cc-a1e5-d777a94f23ce"
 }
