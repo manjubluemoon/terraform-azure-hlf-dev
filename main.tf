@@ -29,7 +29,25 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
         client_secret = var.aks_service_principal_client_secret
     }
 
+    kubernetes_version = "1.11.5"
+
+  depends_on = [
+    azurerm_resource_group.aks_rg
+  ]
+
+
     tags = {
         Environment = "Development"
     }
+}
+
+# Install and configure Helm
+resource "null_resource" "helm_installation" {
+  provisioner "local-exec" {
+    command = "kubectl create -f ./helm-rbac.yaml && helm init --service-account tiller"
+  }
+
+  depends_on = [
+    azurerm_kubernetes_cluster.aks_cluster
+  ]
 }
