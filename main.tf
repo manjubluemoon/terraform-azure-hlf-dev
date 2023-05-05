@@ -1,8 +1,10 @@
+# Create a resource group
 resource "azurerm_resource_group" "boochis-hlf-dev-rg" {
   name     = var.resource_group_name
   location = var.locationk8s
 }
 
+# Create an AKS cluster
 resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
   name                = var.cluster_name
   location            = var.locationk8s
@@ -38,24 +40,40 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
   }
 }
 
+# Create a public IP for the AKS cluster
+resource "azurerm_public_ip" "boochis-hlf-dev-public-ip" {
+  name                = "${azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.name}-public-ip"
+  location            = var.locationk8s
+  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
+  allocation_method   = "Static"
+
+  tags = {
+    Environment = "Development"
+  }
+}
+
 # Install and configure Helm
 resource "null_resource" "helm_installation" {
   provisioner "remote-exec" {
-
     connection {
-      type     = "ssh"
-      host     = azurerm_public_ip.boochis-hlf-dev-public-ip.fqdn
-      user     = "admin"
-      password = ""
+      type        = "ssh"
+      host        = azurerm_public_ip.boochis-hlf-dev-public-ip.ip_address
+      user        = "admin"
       private_key = file("~/.ssh/id_rsa")
     }
+
     inline = [
-      "kubectl apply -f ./helm-rbac.yaml",
-      "helm init --service-account tiller"
+      "kubectl apply -f https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get-helm-3",
+      "kubectl create serviceaccount tiller --namespace kube-system",
+      "kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller",
+      "kubectl patch deploy --namespace kube-system tiller-deploy -p '{\"spec\":{\"template\":{\"spec\":{\"serviceAccount\":\"tiller\"}}}}'",
+      "helm repo add stable https://charts.helm.sh/stable",
+      "helm repo update"
     ]
   }
 
   depends_on = [
-    azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster
+    azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster,
+    azurerm_public_ip.boochis-hlf-dev-public-ip
   ]
 }
