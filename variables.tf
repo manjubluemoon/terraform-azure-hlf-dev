@@ -40,3 +40,9 @@ variable aks_service_principal_client_secret{
 variable aks_service_principal_object_id {
     default= "c007453b-b40b-44cc-a1e5-d777a94f23ce"
 }
+
+variable "namespace" {
+  description = "The name of the Kubernetes namespace to create."
+  type        = string
+}
+
