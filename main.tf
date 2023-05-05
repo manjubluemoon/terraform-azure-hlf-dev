@@ -29,7 +29,7 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
         client_secret = var.aks_service_principal_client_secret
     }
 
-    kubernetes_version = "1.25.0"
+# kubernetes_version = "1.25.0"
 
   depends_on = [
     azurerm_resource_group.boochis-hlf-dev-rg
