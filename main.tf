@@ -41,6 +41,14 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
 # Install and configure Helm
 resource "null_resource" "helm_installation" {
   provisioner "remote-exec" {
+
+    connection {
+      type     = "ssh"
+      host     = azurerm_public_ip.boochis-hlf-dev-public-ip.fqdn
+      user     = "admin"
+      password = ""
+      private_key = file("~/.ssh/id_rsa")
+    }
     inline = [
       "kubectl apply -f ./helm-rbac.yaml",
       "helm init --service-account tiller"
