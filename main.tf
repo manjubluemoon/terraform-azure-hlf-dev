@@ -59,7 +59,7 @@ resource "null_resource" "helm_installation" {
       type        = "ssh"
       host        = azurerm_public_ip.boochis-hlf-dev-public-ip.ip_address
       user        = "admin"
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.private_key_path)
     }
 
     inline = [
