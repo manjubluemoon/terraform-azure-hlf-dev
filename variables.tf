@@ -44,5 +44,6 @@ variable aks_service_principal_object_id {
 variable "namespace" {
   description = "The name of the Kubernetes namespace to create."
   type        = string
+  default = "boochis-hlf-dev-ns"
 }
 
