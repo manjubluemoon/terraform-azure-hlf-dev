@@ -54,26 +54,19 @@ resource "azurerm_public_ip" "boochis-hlf-dev-public-ip" {
 
 # Install and configure Helm
 resource "null_resource" "helm_installation" {
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      host        = azurerm_public_ip.boochis-hlf-dev-public-ip.ip_address
-      user        = "admin"
-      private_key = var.SSH_PRIVATE_KEY
-    }
-
-    inline = [
-      "kubectl apply -f https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get-helm-3",
-      "kubectl create serviceaccount tiller --namespace kube-system",
-      "kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller",
-      "kubectl patch deploy --namespace kube-system tiller-deploy -p '{\"spec\":{\"template\":{\"spec\":{\"serviceAccount\":\"tiller\"}}}}'",
-      "helm repo add stable https://charts.helm.sh/stable",
-      "helm repo update"
-    ]
+  provisioner "local-exec" {
+    command = "az aks get-credentials --resource-group ${var.resource_group_name} --name ${var.cluster_name} && kubectl apply -f https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get-helm-3 && kubectl create serviceaccount tiller --namespace kube-system && kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller && kubectl patch deploy --namespace kube-system tiller-deploy -p '{\"spec\":{\"template\":{\"spec\":{\"serviceAccount\":\"tiller\"}}}}' && helm repo add stable https://charts.helm.sh/stable && helm repo update"
   }
 
   depends_on = [
     azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster,
     azurerm_public_ip.boochis-hlf-dev-public-ip
   ]
+}
+
+# Create a Kubernetes namespace
+resource "kubernetes_namespace" "boochis-hlf-dev-ns" {
+  metadata {
+    name = var.namespace
+  }
 }
