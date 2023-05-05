@@ -41,9 +41,11 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
 }
 
 # Install and configure Helm
-resource "null_resource" "helm_installation" {
-  provisioner "local-exec" {
-    command = "kubectl create -f ./helm-rbac.yaml && helm init --service-account tiller"
+provisioner "remote-exec" {
+    inline = [
+      "kubectl apply -f ./helm-rbac.yaml",
+      "helm init --service-account tiller"
+    ]
   }
 
   depends_on = [
