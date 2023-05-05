@@ -51,6 +51,12 @@ resource "azurerm_public_ip" "boochis-hlf-dev-public-ip" {
     Environment = "Development"
   }
 }
+# Install and configure Helm
+resource "null_resource" "install_azure_cli" {
+  provisioner "local-exec" {
+    command = "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash"
+  }
+}
 
 # Install and configure Helm
 resource "null_resource" "helm_installation" {
