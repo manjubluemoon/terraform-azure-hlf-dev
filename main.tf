@@ -32,9 +32,8 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
     kubernetes_version = "1.11.5"
 
   depends_on = [
-    azurerm_resource_group.resource_group_name
+    azurerm_resource_group.boochis-hlf-dev-rg
   ]
-
 
     tags = {
         Environment = "Development"
@@ -48,6 +47,6 @@ resource "null_resource" "helm_installation" {
   }
 
   depends_on = [
-    azurerm_kubernetes_cluster.cluster_name
+    azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster
   ]
 }
