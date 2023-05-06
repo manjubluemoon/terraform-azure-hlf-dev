@@ -2,13 +2,12 @@ provider "azurerm" {
   features {}
 
   subscription_id = var.subscription_id
-  client_id       = var.client_id
-  client_secret   = var.client_secret
+  client_id       = var.aks_service_principal_app_id
+  client_secret   = var.aks_service_principal_client_secret
   tenant_id       = var.tenant_id
 }
 
 provider "kubernetes" {
-  load_config_file       = false
   host                   = azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config.0.host
   username               = azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config.0.username
   password               = azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config.0.password
