@@ -33,7 +33,7 @@ variable aks_service_principal_app_id {
     default= "e9f91da8-c684-4cc4-b2d3-cabf7112e7c0"
 }
 
-variable aks_service_principal_client_secret{
+variable client_secret{
     default = "ePf8Q~doRQy3isQoZgNWuJlrkEKG9n0y679h8c_s"
 }
 
@@ -54,9 +54,4 @@ variable "namespace" {
   type        = string
   default = "boochis-hlf-dev-ns"
 }
-
-variable "client_secret" {
-  type = string
-}
-
 
