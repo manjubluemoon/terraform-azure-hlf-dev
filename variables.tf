@@ -22,7 +22,7 @@ variable "dns_prefix" {
 
 # Refer to https://azure.microsoft.com/global-infrastructure/services/?products=monitor for available Log Analytics regions.
 variable "log_analytics_workspace_location" {
-  default = "eastus"
+  default = "southindia"
 }
 
 variable "log_analytics_workspace_name" {
@@ -35,7 +35,7 @@ variable "log_analytics_workspace_sku" {
 }
 
 variable "resource_group_location" {
-  default     = "eastus"
+  default     = "southindia"
   description = "Location of the resource group."
 }
 
