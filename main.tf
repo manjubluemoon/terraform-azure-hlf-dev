@@ -1,78 +1,66 @@
-# Create a resource group
-resource "azurerm_resource_group" "boochis-hlf-dev-rg" {
-  name     = var.resource_group_name
-  location = var.locationk8s
+# Generate random resource group name
+resource "random_pet" "rg_name" {
+  prefix = var.resource_group_name_prefix
 }
 
-# Create an AKS cluster
-resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-k8s-cluster" {
+resource "azurerm_resource_group" "rg" {
+  location = var.resource_group_location
+  name     = random_pet.rg_name.id
+}
+
+resource "random_id" "log_analytics_workspace_name_suffix" {
+  byte_length = 8
+}
+
+resource "azurerm_log_analytics_workspace" "test" {
+  location            = var.log_analytics_workspace_location
+  # The WorkSpace name has to be unique across the whole of azure;
+  # not just the current subscription/tenant.
+  name                = "${var.log_analytics_workspace_name}-${random_id.log_analytics_workspace_name_suffix.dec}"
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = var.log_analytics_workspace_sku
+}
+
+resource "azurerm_log_analytics_solution" "test" {
+  location              = azurerm_log_analytics_workspace.test.location
+  resource_group_name   = azurerm_resource_group.rg.name
+  solution_name         = "ContainerInsights"
+  workspace_name        = azurerm_log_analytics_workspace.test.name
+  workspace_resource_id = azurerm_log_analytics_workspace.test.id
+
+  plan {
+    product   = "OMSGallery/ContainerInsights"
+    publisher = "Microsoft"
+  }
+}
+
+resource "azurerm_kubernetes_cluster" "k8s" {
+  location            = azurerm_resource_group.rg.location
   name                = var.cluster_name
-  location            = var.locationk8s
-  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
+  resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = var.dns_prefix
-
-  linux_profile {
-    admin_username = "boss"
-
-    ssh_key {
-      key_data = var.ssh_public_key
-    }
+  tags                = {
+    Environment = "Development"
   }
 
   default_node_pool {
-    name            = "default"
-    node_count      = var.agent_count
-    vm_size         = "Standard_D11"
-    os_disk_size_gb = 30
+    name       = "agentpool"
+    vm_size    = "Standard_D2_v2"
+    node_count = var.agent_count
   }
+  linux_profile {
+    admin_username = "ubuntu"
 
+    ssh_key {
+      key_data = file(var.ssh_public_key)
+    }
+  }
+  network_profile {
+    network_plugin    = "kubenet"
+    load_balancer_sku = "standard"
+  }
   service_principal {
     client_id     = var.aks_service_principal_app_id
     client_secret = var.aks_service_principal_client_secret
-  }
-
-  depends_on = [
-    azurerm_resource_group.boochis-hlf-dev-rg
-  ]
-
-  tags = {
-    Environment = "Development"
-  }
-}
-
-# Create a public IP for the AKS cluster
-resource "azurerm_public_ip" "boochis-hlf-dev-public-ip" {
-  name                = "${azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.name}-public-ip"
-  location            = var.locationk8s
-  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
-  allocation_method   = "Static"
-
-  tags = {
-    Environment = "Development"
-  }
-}
-# Install and configure Helm
-resource "null_resource" "install_azure_cli" {
-  provisioner "local-exec" {
-    command = "curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash"
-  }
-}
-
-# Install and configure Helm
-resource "null_resource" "helm_installation" {
-  provisioner "local-exec" {
-    command = "az aks get-credentials --resource-group ${var.resource_group_name} --name ${var.cluster_name} && kubectl apply -f https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get-helm-3 && kubectl create serviceaccount tiller --namespace kube-system && kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller && kubectl patch deploy --namespace kube-system tiller-deploy -p '{\"spec\":{\"template\":{\"spec\":{\"serviceAccount\":\"tiller\"}}}}' && helm repo add stable https://charts.helm.sh/stable && helm repo update"
-  }
-
-  depends_on = [
-    azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster,
-    azurerm_public_ip.boochis-hlf-dev-public-ip
-  ]
-}
-
-# Create a Kubernetes namespace
-resource "kubernetes_namespace" "boochis-hlf-dev-ns" {
-  metadata {
-    name = var.namespace
   }
 }
