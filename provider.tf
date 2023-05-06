@@ -18,9 +18,9 @@ provider "kubernetes" {
 }
 
 provider "kubectl" {
-  source = "hashicorp/kubectl"
-  }
-
+  version = "1.11.0"
+  config_path = var.kube_config_path
+}
 
 terraform {
   required_version = ">=1.0"
@@ -33,6 +33,13 @@ terraform {
     random = {
       source  = "hashicorp/random"
       version = "~>3.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~>2.0"
+    }
+    kubectl = {
+      version = ">= 1.11.0"
     }
   }
 }
