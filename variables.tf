@@ -55,3 +55,7 @@ variable "namespace" {
   default = "boochis-hlf-dev-ns"
 }
 
+variable client_id {
+    default= "e9f91da8-c684-4cc4-b2d3-cabf7112e7c0"
+}
+
