@@ -18,8 +18,9 @@ provider "kubernetes" {
 }
 
 provider "kubectl" {
-  config_path = var.kube_config_path
-}
+  source = "hashicorp/kubectl"
+  }
+
 
 terraform {
   required_version = ">=1.0"
