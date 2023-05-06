@@ -55,3 +55,8 @@ variable "namespace" {
   default = "boochis-hlf-dev-ns"
 }
 
+variable "client_secret" {
+  type = string
+}
+
+
