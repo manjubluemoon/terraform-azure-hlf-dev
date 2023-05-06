@@ -1,3 +1,23 @@
+terraform {
+  required_version = ">= 0.13"
+  required_providers {
+    azurerm = {
+      source = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+    kubectl = {
+      source = "hashicorp/kubectl"
+    }
+    null = {
+      source = "hashicorp/null"
+    }
+    random = {
+      source = "hashicorp/random"
+      version = "~> 3.0"
+    }
+  }
+}
+
 provider "azurerm" {
   features {}
 
@@ -7,39 +27,10 @@ provider "azurerm" {
   tenant_id       = var.tenant_id
 }
 
-provider "kubernetes" {
-  load_config_file       = false
-  host                   = azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config.0.host
-  username               = azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config.0.username
-  password               = azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config.0.password
-  client_certificate     = base64decode(azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config.0.client_certificate)
-  client_key             = base64decode(azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config.0.client_key)
-  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.boochis-hlf-dev-k8s-cluster.kube_config.0.cluster_ca_certificate)
-}
-
 provider "kubectl" {
-  version = "1.11.0"
-  config_path = var.kube_config_path
+  config_path = var.kubeconfig_path
 }
 
-terraform {
-  required_version = ">=1.0"
+provider "null" {}
 
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~>3.0"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = "~>3.0"
-    }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~>2.0"
-    }
-    kubectl = {
-      version = ">= 1.11.0"
-    }
-  }
-}
+provider "random" {}
