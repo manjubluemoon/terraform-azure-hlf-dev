@@ -37,6 +37,14 @@ variable aks_service_principal_client_secret{
     default = "ePf8Q~doRQy3isQoZgNWuJlrkEKG9n0y679h8c_s"
 }
 
+variable subscription_id {
+    default= "931a682d-78da-480a-8768-6d37ac12dacf"
+}
+
+variable tenant_id {
+    default = "5768f076-4bcb-4145-90c6-17c03addad41"
+}
+
 variable aks_service_principal_object_id {
     default= "c007453b-b40b-44cc-a1e5-d777a94f23ce"
 }
