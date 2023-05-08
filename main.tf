@@ -35,7 +35,7 @@ resource "azurerm_log_analytics_solution" "boochis-hlf-dev-soln" {
 }
 
 resource "azurerm_container_registry" "boochis-hlf-dev-acr" {
-  name                = "containerRegistry1"
+  name                = var.acr_name
   resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
   location            = azurerm_resource_group.boochis-hlf-dev-rg.location
   sku                 = "Standard"
@@ -46,6 +46,7 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
   name                = var.cluster_name
   resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
   dns_prefix          = var.dns_prefix
+
   tags                = {
     Environment = "Development"
   }
@@ -56,7 +57,7 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     node_count = var.agent_count
   }
   linux_profile {
-    admin_username = "ubuntu"
+    admin_username = "boss"
 
     ssh_key {
       key_data = var.ssh_public_key
