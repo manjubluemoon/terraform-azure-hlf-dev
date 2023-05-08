@@ -3,7 +3,7 @@ resource "random_pet" "rg_name" {
   prefix = var.resource_group_name_prefix
 }
 
-resource "azurerm_resource_group" "rg" {
+resource "azurerm_resource_group" "boochis-hlf-dev-rg" {
   location = var.resource_group_location
   name     = random_pet.rg_name.id
 }
@@ -12,21 +12,21 @@ resource "random_id" "log_analytics_workspace_name_suffix" {
   byte_length = 8
 }
 
-resource "azurerm_log_analytics_workspace" "test" {
+resource "azurerm_log_analytics_workspace" "boochis-hlf-dev-wsp" {
   location            = var.log_analytics_workspace_location
   # The WorkSpace name has to be unique across the whole of azure;
   # not just the current subscription/tenant.
   name                = "${var.log_analytics_workspace_name}-${random_id.log_analytics_workspace_name_suffix.dec}"
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
   sku                 = var.log_analytics_workspace_sku
 }
 
-resource "azurerm_log_analytics_solution" "test" {
-  location              = azurerm_log_analytics_workspace.test.location
-  resource_group_name   = azurerm_resource_group.rg.name
+resource "azurerm_log_analytics_solution" "boochis-hlf-dev-soln" {
+  location              = azurerm_log_analytics_workspace.boochis-hlf-dev-wsp.location
+  resource_group_name   = azurerm_resource_group.boochis-hlf-dev-rg.name
   solution_name         = "ContainerInsights"
-  workspace_name        = azurerm_log_analytics_workspace.test.name
-  workspace_resource_id = azurerm_log_analytics_workspace.test.id
+  workspace_name        = azurerm_log_analytics_workspace.boochis-hlf-dev-wsp.name
+  workspace_resource_id = azurerm_log_analytics_workspace.boochis-hlf-dev-wsp.id
 
   plan {
     product   = "OMSGallery/ContainerInsights"
@@ -34,10 +34,17 @@ resource "azurerm_log_analytics_solution" "test" {
   }
 }
 
-resource "azurerm_kubernetes_cluster" "k8s" {
-  location            = azurerm_resource_group.rg.location
+resource "azurerm_container_registry" "boochis-hlf-dev-acr" {
+  name                = "containerRegistry1"
+  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
+  location            = azurerm_resource_group.boochis-hlf-dev-rg.location
+  sku                 = "standard"
+}
+
+resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
+  location            = azurerm_resource_group.boochis-hlf-dev-rg.location
   name                = var.cluster_name
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
   dns_prefix          = var.dns_prefix
   tags                = {
     Environment = "Development"
@@ -63,4 +70,11 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     client_id     = var.aks_service_principal_app_id
     client_secret = var.aks_service_principal_client_secret
   }
+}
+
+resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
+  principal_id                     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kubelet_identity[0].object_id
+  role_definition_name             = "AcrPull"
+  scope                            = azurerm_container_registry.boochis-hlf-dev-acr.id
+  skip_service_principal_aad_check = true
 }
