@@ -13,11 +13,11 @@ variable "aks_service_principal_client_secret" {
 }
 
 variable "cluster_name" {
-  default = "k8stest"
+  default = "boochis-hlf-dev-cluster"
 }
 
 variable "dns_prefix" {
-  default = "k8stest"
+  default = "boochis-hlf-dev-dns"
 }
 
 # Refer to https://azure.microsoft.com/global-infrastructure/services/?products=monitor for available Log Analytics regions.
@@ -26,7 +26,7 @@ variable "log_analytics_workspace_location" {
 }
 
 variable "log_analytics_workspace_name" {
-  default = "testLogAnalyticsWorkspaceName"
+  default = "boochis-hlf-dev-wsp"
 }
 
 # Refer to https://azure.microsoft.com/pricing/details/monitor/ for Log Analytics pricing
