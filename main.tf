@@ -38,7 +38,7 @@ resource "azurerm_container_registry" "boochis-hlf-dev-acr" {
   name                = "containerRegistry1"
   resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
   location            = azurerm_resource_group.boochis-hlf-dev-rg.location
-  sku                 = "standard"
+  sku                 = "Standard"
 }
 
 resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
