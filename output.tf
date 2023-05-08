@@ -1,38 +1,80 @@
-output "client_certificate" {
-  value     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kube_config[0].client_certificate
-  sensitive = true
+# Generate random resource group name
+resource "random_pet" "rg_name" {
+  prefix = var.resource_group_name_prefix
 }
 
-output "client_key" {
-  value     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kube_config[0].client_key
-  sensitive = true
+resource "azurerm_resource_group" "boochis-hlf-dev-rg" {
+  location = var.resource_group_location
+  name     = random_pet.rg_name.id
 }
 
-output "cluster_ca_certificate" {
-  value     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kube_config[0].cluster_ca_certificate
-  sensitive = true
+resource "random_id" "log_analytics_workspace_name_suffix" {
+  byte_length = 8
 }
 
-output "cluster_password" {
-  value     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kube_config[0].password
-  sensitive = true
+resource "azurerm_log_analytics_workspace" "boochis-hlf-dev-wsp" {
+  location            = var.log_analytics_workspace_location
+  # The WorkSpace name has to be unique across the whole of azure;
+  # not just the current subscription/tenant.
+  name                = "${var.log_analytics_workspace_name}-${random_id.log_analytics_workspace_name_suffix.dec}"
+  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
+  sku                 = var.log_analytics_workspace_sku
 }
 
-output "cluster_username" {
-  value     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kube_config[0].username
-  sensitive = true
+resource "azurerm_log_analytics_solution" "boochis-hlf-dev-soln" {
+  location              = azurerm_log_analytics_workspace.boochis-hlf-dev-wsp.location
+  resource_group_name   = azurerm_resource_group.boochis-hlf-dev-rg.name
+  solution_name         = "ContainerInsights"
+  workspace_name        = azurerm_log_analytics_workspace.boochis-hlf-dev-wsp.name
+  workspace_resource_id = azurerm_log_analytics_workspace.boochis-hlf-dev-wsp.id
+
+  plan {
+    product   = "OMSGallery/ContainerInsights"
+    publisher = "Microsoft"
+  }
 }
 
-output "host" {
-  value     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kube_config[0].host
-  sensitive = true
+resource "azurerm_container_registry" "boochis-hlf-dev-acr" {
+  name                = "containerRegistry1"
+  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
+  location            = azurerm_resource_group.boochis-hlf-dev-rg.location
+  sku                 = "Standard"
 }
 
-output "kube_config" {
-  value     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kube_config_raw
-  sensitive = true
+resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
+  location            = azurerm_resource_group.boochis-hlf-dev-rg.location
+  name                = var.cluster_name
+  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
+  dns_prefix          = var.dns_prefix
+  tags                = {
+    Environment = "Development"
+  }
+
+  default_node_pool {
+    name       = "agentpool"
+    vm_size    = "Standard_D2_v2"
+    node_count = var.agent_count
+  }
+  linux_profile {
+    admin_username = "ubuntu"
+
+    ssh_key {
+      key_data = var.ssh_public_key
+    }
+  }
+  network_profile {
+    network_plugin    = "kubenet"
+    load_balancer_sku = "standard"
+  }
+  service_principal {
+    client_id     = var.aks_service_principal_app_id
+    client_secret = var.aks_service_principal_client_secret
+  }
 }
 
-output "resource_group_name" {
-  value = azurerm_resource_group.boochis-hlf-dev-rg.name
+resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
+  principal_id                     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kubelet_identity[0].object_id
+  role_definition_name             = "AcrPull"
+  scope                            = azurerm_container_registry.boochis-hlf-dev-acr.id
+  skip_service_principal_aad_check = true
 }
