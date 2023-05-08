@@ -16,6 +16,10 @@ variable "cluster_name" {
   default = "boochis-hlf-dev-cluster"
 }
 
+variable "acr_name" {
+  default = "boochis-hlf-dev-acr"
+}
+
 variable "dns_prefix" {
   default = "boochis-hlf-dev-dns"
 }
