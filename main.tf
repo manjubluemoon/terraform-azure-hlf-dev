@@ -55,10 +55,11 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     name       = "agentpool"
     vm_size    = "Standard_D2_v2"
     node_count = var.agent_count
-  }
 
-  role_based_access_control {
+    role_based_access_control {
     enabled = true
+  }
+  
   }
 
   identity {
