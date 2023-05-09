@@ -75,9 +75,6 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     type = "SystemAssigned"
   }
 
-  role_based_access_control {
-    enabled = true
-    }
 }
 
 resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
