@@ -56,14 +56,6 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     name       = "agentpool"
     vm_size    = "Standard_D2_v2"
     node_count = var.agent_count
-
-    identity {
-      type = "SystemAssigned"
-    }
-
-    role_based_access_control {
-      enabled = true
-    }
   }
 
   linux_profile {
@@ -83,6 +75,10 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     client_id     = var.aks_service_principal_app_id
     client_secret = var.aks_service_principal_client_secret
   }
+
+  identity {
+      type = var.identity_type
+    }
 }
 
 resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
