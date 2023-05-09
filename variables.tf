@@ -1,63 +1,91 @@
-variable "agent_count" {
-  default = 3
+# Generate random resource group name
+resource "random_pet" "rg_name" {
+  prefix = var.resource_group_name_prefix
 }
 
-# The following two variable declarations are placeholder references.
-# Set the values for these variable in terraform.tfvars
-variable "aks_service_principal_app_id" {
-  default = ""
+resource "azurerm_resource_group" "boochis-hlf-dev-rg" {
+  location = var.resource_group_location
+  name     = random_pet.rg_name.id
 }
 
-variable "aks_service_principal_client_secret" {
-  default = ""
+resource "random_id" "log_analytics_workspace_name_suffix" {
+  byte_length = 8
 }
 
-variable "cluster_name" {
-  default = "boochis-hlf-dev-cluster"
+resource "azurerm_log_analytics_workspace" "boochis-hlf-dev-wsp" {
+  location            = var.log_analytics_workspace_location
+  # The WorkSpace name has to be unique across the whole of azure;
+  # not just the current subscription/tenant.
+  name                = "${var.log_analytics_workspace_name}-${random_id.log_analytics_workspace_name_suffix.dec}"
+  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
+  sku                 = var.log_analytics_workspace_sku
 }
 
-variable "acr_name" {
-  default = "boochis2hlf2dev2acr"
+resource "azurerm_log_analytics_solution" "boochis-hlf-dev-soln" {
+  location              = azurerm_log_analytics_workspace.boochis-hlf-dev-wsp.location
+  resource_group_name   = azurerm_resource_group.boochis-hlf-dev-rg.name
+  solution_name         = "ContainerInsights"
+  workspace_name        = azurerm_log_analytics_workspace.boochis-hlf-dev-wsp.name
+  workspace_resource_id = azurerm_log_analytics_workspace.boochis-hlf-dev-wsp.id
+
+  plan {
+    product   = "OMSGallery/ContainerInsights"
+    publisher = "Microsoft"
+  }
 }
 
-variable "dns_prefix" {
-  default = "boochis-hlf-dev-dns"
+resource "azurerm_container_registry" "boochis-hlf-dev-acr" {
+  name                = var.acr_name
+  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
+  location            = azurerm_resource_group.boochis-hlf-dev-rg.location
+  sku                 = "Standard"
 }
 
-# Refer to https://azure.microsoft.com/global-infrastructure/services/?products=monitor for available Log Analytics regions.
-variable "log_analytics_workspace_location" {
-  default = "southindia"
+resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
+  location            = azurerm_resource_group.boochis-hlf-dev-rg.location
+  name                = var.cluster_name
+  resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
+  dns_prefix          = var.dns_prefix
+
+  tags                = {
+    Environment = "Development"
+    Project     = "Boochis Hyperledger Fabric"
+  }
+
+  default_node_pool {
+    name       = "agentpool"
+    vm_size    = "Standard_D2_v2"
+    node_count = var.agent_count
+
+    identity {
+      type = "SystemAssigned"
+    }
+
+    role_based_access_control {
+      enabled = true
+    }
+  }
+
+  linux_profile {
+    admin_username = "boss"
+
+    ssh_key {
+      key_data = var.ssh_public_key
+    }
+  }
+  network_profile {
+    network_plugin    = "kubenet"
+    load_balancer_sku = "standard"
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
 
-variable "log_analytics_workspace_name" {
-  default = "boochis-hlf-dev-wsp"
-}
-
-# Refer to https://azure.microsoft.com/pricing/details/monitor/ for Log Analytics pricing
-variable "log_analytics_workspace_sku" {
-  default = "PerGB2018"
-}
-
-variable "resource_group_location" {
-  default     = "southindia"
-  description = "Location of the resource group."
-}
-
-variable "resource_group_name_prefix" {
-  default     = "rg"
-  description = "Prefix of the resource group name that's combined with a random ID so name is unique in your Azure subscription."
-}
-
-variable "ssh_public_key" {
-  default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDDQJEaoMsy3Owj9OoTQcib1gGazU3tFd+Y7H99eGpqFYRqBBT1GkEEiEJUOsXz7yFag8N0jTzTGCHAwwCbpm7hg9hGC8JRxHF7Q7DLxUIeWkBKT4mW1YQulJu0cfqFX3x8x29ak2d7d4frgaUYoc1XMm9xNnZg9rlLDN8LH7PfcSMqXSY0kQilAJz3SmcDthG3bnSja8qcY1gvbkNalq/tLUkbud8DcQdqIGWtmyUh089yzIIeKnrUSv4zxMMGksOD8gd9FVGy4nqK3wCNEASUBB8DvI8NMfqSJIMWmqTYwJ1rYejbQbp4o3HmHl4MYkQRPvzcy4sSBBz0iqVDbzuM5TMR+Riw5aswhsKpeFwG9XFp1hlmfT0YH1SbX45KMgQWIDKZzPLgNWEwfMiPuA8KZfiPlX+5UZaKMsGG1TPmNCdB+hH/fBokqkFZ4wfDlJZ5jOSL4y6DCghBaDY2/fxZGIV3x5FjAuG7LUcE9yko8b57Yev/A62Pv7hJyOs86DU= generated-by-azure"
-}
-
-variable "SSH_PRIVATE_KEY" {
-  description = "Path to the SSH private key file"
-}
-
-variable "identity_type" {
-  description = "The type of identity used for the managed cluster."
-  type        = string
-  default     = "SystemAssigned"
+resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
+  principal_id             = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.identity[0].principal_id
+  role_definition_name     = "AcrPull"
+  scope                    = azurerm_container_registry.boochis-hlf-dev-acr.id
+  skip_service_principal_aad_check = true
 }
