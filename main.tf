@@ -57,10 +57,10 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     node_count = var.agent_count
   }
 
-  kubelet_identity {
+  identity {
     type = "SystemAssigned"
   }
-  
+
   linux_profile {
     admin_username = "boss"
 
