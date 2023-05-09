@@ -57,14 +57,7 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     vm_size    = "Standard_D2_v2"
     node_count = var.agent_count
 
-    identity {
-      type = "SystemAssigned"
     }
-
-    role_based_access_control {
-      enabled = true
-    }
-  }
 
   linux_profile {
     admin_username = "boss"
@@ -81,6 +74,10 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
   identity {
     type = "SystemAssigned"
   }
+
+  role_based_access_control {
+    enabled = true
+    }
 }
 
 resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
