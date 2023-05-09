@@ -47,7 +47,7 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
   resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
   dns_prefix          = var.dns_prefix
 
-  tags = {
+  tags                = {
     Environment = "Development"
     Project     = "Boochis Hyperledger Fabric"
   }
@@ -56,6 +56,14 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     name       = "agentpool"
     vm_size    = "Standard_D2_v2"
     node_count = var.agent_count
+
+    identity {
+      type = "SystemAssigned"
+    }
+
+    role_based_access_control {
+      enabled = true
+    }
   }
 
   linux_profile {
@@ -65,20 +73,14 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
       key_data = var.ssh_public_key
     }
   }
-
   network_profile {
     network_plugin    = "kubenet"
     load_balancer_sku = "standard"
   }
 
-  service_principal {
-    client_id     = var.aks_service_principal_app_id
-    client_secret = var.aks_service_principal_client_secret
-  }
-
   identity {
-      type = var.identity_type
-    }
+    type = "SystemAssigned"
+  }
 }
 
 resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
