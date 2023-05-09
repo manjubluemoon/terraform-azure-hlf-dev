@@ -55,3 +55,9 @@ variable "ssh_public_key" {
 variable "SSH_PRIVATE_KEY" {
   description = "Path to the SSH private key file"
 }
+
+variable "identity_type" {
+  description = "The type of identity used for the managed cluster."
+  type        = string
+  default     = "SystemAssigned"
+}
