@@ -57,10 +57,13 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     node_count = var.agent_count
   }
 
+  role_based_access_control {
+    enabled = true
+  }
+
   identity {
     type = "SystemAssigned"
   }
-
   linux_profile {
     admin_username = "boss"
 
@@ -78,10 +81,8 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
   }
 }
 
-resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
-  scope                            = azurerm_container_registry.boochis-hlf-dev-acr.id
-  role_definition_name             = "AcrPull"
-  principal_id                     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kubelet_identity[0].object_id
-  skip_service_principal_aad_check = true
-
- }
+  resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
+  scope                = azurerm_container_registry.boochis-hlf-dev-acr.id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kubelet_identity[0].object_id
+}
