@@ -58,15 +58,14 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     node_count = var.agent_count
 
     identity {
-    type = "SystemAssigned"
+      type = "SystemAssigned"
     }
 
     role_based_access_control {
-    enabled = true
-  }
+      enabled = true
+    }
   }
 
-  
   linux_profile {
     admin_username = "boss"
 
@@ -74,19 +73,20 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
       key_data = var.ssh_public_key
     }
   }
+
   network_profile {
     network_plugin    = "kubenet"
     load_balancer_sku = "standard"
   }
-  service_principal {
-    client_id     = var.aks_service_principal_app_id
-    client_secret = var.aks_service_principal_client_secret
+
+  identity {
+    type = "SystemAssigned"
   }
 }
 
 resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
-  principal_id                     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.identity[0].principal_id
-  role_definition_name             = "AcrPull"
-  scope                            = azurerm_container_registry.boochis-hlf-dev-acr.id
+  principal_id             = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.identity[0].principal_id
+  role_definition_name     = "AcrPull"
+  scope                    = azurerm_container_registry.boochis-hlf-dev-acr.id
   skip_service_principal_aad_check = true
 }
