@@ -49,6 +49,7 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
 
   tags                = {
     Environment = "Development"
+    Project     = "Boochis Hyperledger Fabric"
   }
 
   default_node_pool {
@@ -56,15 +57,16 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     vm_size    = "Standard_D2_v2"
     node_count = var.agent_count
 
+    identity {
+    type = "SystemAssigned"
+    }
+
     role_based_access_control {
     enabled = true
   }
-  
   }
 
-  identity {
-    type = "SystemAssigned"
-  }
+  
   linux_profile {
     admin_username = "boss"
 
@@ -82,8 +84,9 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
   }
 }
 
-  resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
-  scope                = azurerm_container_registry.boochis-hlf-dev-acr.id
-  role_definition_name = "AcrPull"
-  principal_id         = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.kubelet_identity[0].object_id
+resource "azurerm_role_assignment" "boochis-hlf-dev-rbac" {
+  principal_id                     = azurerm_kubernetes_cluster.boochis-hlf-dev-cluster.identity[0].principal_id
+  role_definition_name             = "AcrPull"
+  scope                            = azurerm_container_registry.boochis-hlf-dev-acr.id
+  skip_service_principal_aad_check = true
 }
