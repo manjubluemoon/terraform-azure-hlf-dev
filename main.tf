@@ -56,6 +56,11 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
     vm_size    = "Standard_D2_v2"
     node_count = var.agent_count
   }
+
+  kubelet_identity {
+    type = "SystemAssigned"
+  }
+  
   linux_profile {
     admin_username = "boss"
 
