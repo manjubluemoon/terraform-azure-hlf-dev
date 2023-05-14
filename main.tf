@@ -3,7 +3,6 @@ resource "random_pet" "rg_name" {
   prefix = var.resource_group_name_prefix
 }
 
-#Create Resource Group
 resource "azurerm_resource_group" "boochis-hlf-dev-rg" {
   location = var.resource_group_location
   name     = random_pet.rg_name.id
@@ -55,7 +54,8 @@ resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
 
   default_node_pool {
     name       = "agentpool"
-    vm_size    = "Standard_D2_v2"
+    #vm_size    = "Standard_D2_v2"
+    vm_size = "Standard_B2s"
     node_count = var.agent_count
 
     }
