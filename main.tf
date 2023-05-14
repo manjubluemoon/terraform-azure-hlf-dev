@@ -5,7 +5,7 @@
 
 resource "azurerm_resource_group" "boochis-hlf-dev-rg" {
   location = var.resource_group_location
-  name     = rg_name.id
+  name     = var.resource_group_name
 }
 
 resource "random_id" "log_analytics_workspace_name_suffix" {
