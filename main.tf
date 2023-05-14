@@ -1,11 +1,11 @@
 # Generate random resource group name
-resource "random_pet" "rg_name" {
-  prefix = var.resource_group_name_prefix
-}
+#resource "random_pet" "rg_name" {
+#  prefix = var.resource_group_name_prefix
+#}
 
 resource "azurerm_resource_group" "boochis-hlf-dev-rg" {
   location = var.resource_group_location
-  name     = random_pet.rg_name.id
+  name     = rg_name.id
 }
 
 resource "random_id" "log_analytics_workspace_name_suffix" {
@@ -38,7 +38,7 @@ resource "azurerm_container_registry" "boochis-hlf-dev-acr" {
   name                = var.acr_name
   resource_group_name = azurerm_resource_group.boochis-hlf-dev-rg.name
   location            = azurerm_resource_group.boochis-hlf-dev-rg.location
-  sku                 = "Basic"
+  sku                 = "Standard"
 }
 
 resource "azurerm_kubernetes_cluster" "boochis-hlf-dev-cluster" {
